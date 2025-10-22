@@ -11,7 +11,8 @@
     "lint": "npx tslint 'src/**/*.ts?(x)'",
     "prepublish": "npm run build",
     "test": "npm run lint && npx nyc npx hayspec test",
-    "speedtest": "npx ts-node ./src/scripts/speedtest.ts"
+    "speedtest": "npx ts-node ./src/scripts/speedtest.ts",
+    "concurrency-test": "npx ts-node ./src/scripts/concurrency-test.ts"
   },
   "hayspec": {
     "require": [
