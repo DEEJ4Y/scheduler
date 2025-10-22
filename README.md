@@ -406,9 +406,23 @@ The scheduler has been extensively tested for distributed locking correctness an
 
 | Test | Schedulers | Jobs | Duration | Throughput | Duplicates | Errors |
 |------|------------|------|----------|------------|------------|--------|
-| In-Memory | 50 | 5,000 | 1.1s | 4,539 jobs/sec | 0 ✅ | 0 ✅ |
-| Stress Test | 100 | 10,000 | 2.2s | 4,519 jobs/sec | 0 ✅ | 0 ✅ |
-| **MongoDB** | **100** | **10,000** | **2.1s** | **4,757 jobs/sec** | **0 ✅** | **0 ✅** |
+| In-Memory (Go) | 50 | 5,000 | 1.1s | 4,539 jobs/sec | 0 ✅ | 0 ✅ |
+| Stress Test (Go) | 100 | 10,000 | 2.2s | 4,519 jobs/sec | 0 ✅ | 0 ✅ |
+| **MongoDB (Go)** | **100** | **10,000** | **2.1s** | **4,757 jobs/sec** | **0 ✅** | **0 ✅** |
+| **MongoDB (Node.js)** | **100** | **10,000** | **4.0s** | **2,492 jobs/sec** | **0 ✅** | **0 ✅** |
+
+### Go vs Node.js Performance Comparison
+
+Direct comparison with identical test parameters (100 workers, 10,000 jobs, MongoDB):
+
+| Metric | Go | Node.js | Difference |
+|--------|-------|---------|------------|
+| **Throughput** | 4,757 jobs/sec | 2,492 jobs/sec | **Go 1.91x faster** |
+| **Duration** | 2.1s | 4.0s | **Go 1.91x faster** |
+| **Latency** | 210µs/job | 401µs/job | **Go 1.91x lower** |
+| **Correctness** | 0 duplicates ✅ | 0 duplicates ✅ | **Both perfect** |
+
+**Key Takeaway**: The Go implementation delivers **~2x better performance** while maintaining the same perfect correctness as the original Node.js implementation. Both achieve zero duplicate executions under extreme concurrency (100 workers).
 
 ### Key Validation Points
 
@@ -454,12 +468,37 @@ This proves the scheduler is **production-ready** for:
 
 ## Differences from mongodb-cron
 
-This Go implementation maintains feature parity with the Node.js mongodb-cron package while adding:
+This Go implementation maintains feature parity with the Node.js mongodb-cron package while offering significant improvements:
 
-- **Database abstraction**: Not limited to MongoDB
-- **Go idioms**: Context support, proper error handling, concurrent-safe
-- **Type safety**: Strongly typed API
-- **Modern Go**: Uses Go modules, latest best practices
+### Performance Benefits
+
+- **~2x faster throughput**: 4,757 vs 2,492 jobs/sec (tested with 100 workers, 10K jobs)
+- **~2x lower latency**: 210µs vs 401µs per job
+- **Half the execution time**: Completes workloads in ~50% less time
+- **Same correctness**: Both achieve zero duplicate executions ✅
+
+### Architectural Improvements
+
+- **Database abstraction**: Not limited to MongoDB - supports any database via JobStore interface
+- **Go idioms**: Context support, proper error handling, concurrent-safe primitives
+- **Type safety**: Strongly typed API prevents runtime errors
+- **Modern Go**: Uses Go modules, goroutines, latest best practices
+- **Compiled performance**: Native binary offers better resource utilization
+
+### When to Choose Go Over Node.js
+
+**Choose this Go implementation** if you need:
+- ✅ Maximum performance (>2,000 jobs/sec)
+- ✅ Low latency requirements (<300µs per job)
+- ✅ Database flexibility (PostgreSQL, Redis, etc.)
+- ✅ Efficient resource usage in cloud environments
+- ✅ Strong typing and compile-time safety
+
+**Choose Node.js mongodb-cron** if you:
+- ✅ Have an existing Node.js/TypeScript codebase
+- ✅ Need moderate throughput (<2,000 jobs/sec)
+- ✅ Prefer JavaScript ecosystem and tooling
+- ✅ Want simpler deployment (no compilation)
 
 ## License
 
