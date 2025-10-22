@@ -86,6 +86,7 @@ func TestDistributedLocking(t *testing.T) {
 		wg         sync.WaitGroup
 		errorCount atomic.Int64
 		startMutex sync.Mutex
+		stopping   atomic.Bool // Flag to track when shutdown begins
 	)
 
 	// Create and start all schedulers
@@ -108,6 +109,10 @@ func TestDistributedLocking(t *testing.T) {
 				return nil
 			},
 			OnError: func(ctx context.Context, err error) {
+				// Ignore context canceled errors during shutdown - they're expected
+				if stopping.Load() && strings.Contains(err.Error(), "context canceled") {
+					return
+				}
 				errorCount.Add(1)
 				t.Logf("Scheduler %d error: %v", schedulerID, err)
 			},
@@ -205,6 +210,10 @@ func TestDistributedLocking(t *testing.T) {
 
 	// Stop all schedulers
 	t.Log("Stopping schedulers...")
+	// Set stopping flag to ignore context.Canceled errors during shutdown.
+	// These occur when a scheduler is mid-MongoDB call when its context gets canceled.
+	// This is expected behavior and not an error - the schedulers stop cleanly.
+	stopping.Store(true)
 	stopCtx, stopCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer stopCancel()
 

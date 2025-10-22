@@ -66,6 +66,7 @@ func TestConcurrentSchedulersLarge(t *testing.T) {
 		wg         sync.WaitGroup
 		errorCount atomic.Int64
 		startMutex sync.Mutex
+		stopping   atomic.Bool // Flag to ignore expected shutdown errors
 	)
 
 	// Create all schedulers
@@ -82,6 +83,10 @@ func TestConcurrentSchedulersLarge(t *testing.T) {
 				return nil
 			},
 			OnError: func(ctx context.Context, err error) {
+				// Ignore context canceled errors during shutdown - they're expected
+				if stopping.Load() && strings.Contains(err.Error(), "context canceled") {
+					return
+				}
 				errorCount.Add(1)
 				// Only log first few errors to avoid spam
 				if errorCount.Load() <= 5 {
@@ -181,6 +186,7 @@ func TestConcurrentSchedulersLarge(t *testing.T) {
 
 	// Stop all schedulers
 	t.Log("Stopping all schedulers...")
+	stopping.Store(true) // Signal shutdown - context canceled errors are expected now
 	stopCtx, stopCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer stopCancel()
 
