@@ -119,7 +119,7 @@ Execution Statistics:
 Performance Metrics:
   Total duration:           4.013s
   Jobs per second:          2491.90
-  Avg time per job:         401µs
+  Avg time per job:         401μs
   Throughput per cron:      24.92 jobs/sec
 ```
 
