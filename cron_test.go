@@ -36,7 +36,7 @@ func TestCalculateNextStart(t *testing.T) {
 		now := time.Now()
 		job := &Job{
 			SleepUntil: &now,
-			Interval:   "*/5 * * * * *", // every 5 seconds
+			Interval:   "*/5 * * * * *", // every 5 seconds (at :00, :05, :10, :15, etc.)
 		}
 
 		next, err := calculateNextStart(job, 0)
@@ -47,10 +47,16 @@ func TestCalculateNextStart(t *testing.T) {
 			t.Fatal("expected next execution time")
 		}
 
-		// Should be approximately 5 seconds from now
+		// Next execution should be at the next multiple of 5 seconds
+		// Delay should be > 0 and <= 5 seconds
 		diff := next.Sub(now)
-		if diff < 4*time.Second || diff > 6*time.Second {
-			t.Errorf("expected ~5 seconds, got %v", diff)
+		if diff <= 0 || diff > 5*time.Second {
+			t.Errorf("expected 0 < delay <= 5 seconds, got %v", diff)
+		}
+
+		// The seconds value should be a multiple of 5
+		if next.Second()%5 != 0 {
+			t.Errorf("expected seconds to be multiple of 5, got %d", next.Second())
 		}
 	})
 
