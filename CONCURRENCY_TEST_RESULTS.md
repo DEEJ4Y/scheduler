@@ -180,7 +180,7 @@ The `TestDistributedLocking` test validates:
 
 The comprehensive testing demonstrates that the scheduler's locking mechanism is:
 
-- **Correct**: Zero duplicate executions across 15,000+ job executions
+- **Correct**: Zero duplicate executions across 25,000+ job executions
 - **Fast**: 4,500+ jobs/second throughput
 - **Scalable**: Linear performance with concurrent schedulers
 - **Reliable**: No missed jobs, no errors
