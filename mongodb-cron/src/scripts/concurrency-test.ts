@@ -26,9 +26,7 @@ function recordExecution(tracker: ExecutionTracker, jobId: string) {
 }
 
 function pad(num: number, size: number): string {
-  let s = num + "";
-  while (s.length < size) s = "0" + s;
-  return s;
+  return String(num).padStart(size, '0');
 }
 
 function analyzeResults(tracker: ExecutionTracker, numJobs: number) {
