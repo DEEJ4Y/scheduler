@@ -7,19 +7,22 @@ This document presents the results of comprehensive concurrency testing for the 
 ## Test Configuration
 
 ### Small Test (TestConcurrentSchedulers)
+
 - **Concurrent Schedulers**: 50
 - **Total Jobs**: 5,000
 - **Test Duration**: ~1.1 seconds
 
 ### Large Stress Test (TestConcurrentSchedulersLarge)
+
 - **Concurrent Schedulers**: 100
 - **Total Jobs**: 10,000
 - **Test Duration**: ~2.2 seconds
 
 ### MongoDB Test (TestDistributedLocking)
+
 - **Concurrent Schedulers**: 100
 - **Total Jobs**: 10,000
-- **Database**: Real MongoDB instance
+- **Database**: Real MongoDB instance (localhost)
 - **Purpose**: Validate with actual database atomic operations
 
 ## Test Results
@@ -70,6 +73,31 @@ Performance Metrics:
 ```
 
 **Result**: ✅ All 10000 jobs executed exactly once - NO DUPLICATES with 100 concurrent schedulers!
+
+### ✅ MongoDB Distributed Locking Test - PASSED
+
+```
+Test Configuration:
+  Concurrent schedulers:    100
+  Total jobs queued:        10000
+
+Execution Statistics:
+  Total jobs queued:        10000
+  Total executions:         10000
+  Unique jobs executed:     10000
+  Jobs with duplicates:     0
+  Total duplicate runs:     0
+  Jobs not executed:        0
+  Errors encountered:       0
+
+Performance Metrics:
+  Total duration:           2.1019583s
+  Jobs per second:          4757.47
+  Avg time per job:         210.195µs
+  Throughput per scheduler: 47.57 jobs/sec
+```
+
+**Result**: ✅ All 10000 jobs executed exactly once with real MongoDB - NO DUPLICATES!
 
 ## Key Findings
 
@@ -123,11 +151,13 @@ For each test to pass:
 ### Worst-Case Scenarios Tested
 
 1. **Race Condition Maximization**
+
    - All schedulers start simultaneously
    - Jobs all scheduled for immediate execution
    - Very fast polling intervals (2-5ms)
 
 2. **High Contention**
+
    - 100 schedulers competing for jobs
    - Limited job pool creates maximum lock contention
 
@@ -158,15 +188,15 @@ The comprehensive testing demonstrates that the scheduler's locking mechanism is
 
 ### Performance Characteristics
 
-| Metric | Value |
-|--------|-------|
-| Throughput | 4,519 jobs/sec |
-| Latency (avg) | 221 µs |
-| Concurrency | 100 schedulers |
-| Test Scale | 10,000 jobs |
-| Duplicate Rate | 0% ✅ |
-| Miss Rate | 0% ✅ |
-| Error Rate | 0% ✅ |
+| Metric         | Value          |
+| -------------- | -------------- |
+| Throughput     | 4,757 jobs/sec |
+| Latency (avg)  | 211µs          |
+| Concurrency    | 100 schedulers |
+| Test Scale     | 10,000 jobs    |
+| Duplicate Rate | 0% ✅          |
+| Miss Rate      | 0% ✅          |
+| Error Rate     | 0% ✅          |
 
 ### Recommendations
 
