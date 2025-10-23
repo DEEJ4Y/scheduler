@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DEEJ4Y/scheduler"
+	"github.com/DEEJ4Y/mongodb-cron"
 )
 
 // InMemoryStore is a simple in-memory implementation of JobStore for demonstration.

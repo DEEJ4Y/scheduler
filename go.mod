@@ -1,4 +1,4 @@
-module github.com/DEEJ4Y/scheduler
+module github.com/DEEJ4Y/mongodb-cron
 
 go 1.24.7
 

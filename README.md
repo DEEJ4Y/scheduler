@@ -21,12 +21,12 @@ A flexible, database-agnostic job scheduling library for Go that can turn any da
 ## Installation
 
 ```bash
-go get github.com/DEEJ4Y/scheduler
+go get github.com/DEEJ4Y/mongodb-cron
 ```
 
 For MongoDB support:
 ```bash
-go get github.com/DEEJ4Y/scheduler/mongodb
+go get github.com/DEEJ4Y/mongodb-cron/mongodb
 ```
 
 ## Quick Start
@@ -41,7 +41,7 @@ import (
     "fmt"
     "time"
 
-    "github.com/DEEJ4Y/scheduler"
+    "github.com/DEEJ4Y/mongodb-cron"
 )
 
 func main() {
@@ -82,8 +82,8 @@ import (
     "fmt"
     "time"
 
-    "github.com/DEEJ4Y/scheduler"
-    "github.com/DEEJ4Y/scheduler/mongodb"
+    "github.com/DEEJ4Y/mongodb-cron"
+    "github.com/DEEJ4Y/mongodb-cron/mongodb"
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
